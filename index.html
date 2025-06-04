@@ -180,18 +180,18 @@
 
         #devBanner {
             position: fixed;
-            bottom: 40px;
+            bottom: 1px;
             left: 50%;
             transform: translateX(-50%) scale(0.9);
             background: linear-gradient(90deg, #7a5f95, #fc7025);
             color: white;
-            font-size: 1.6em;
+            font-size: 1.2em;
             font-family: 'Segoe UI', sans-serif;
-            padding: 16px 28px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
             opacity: 0;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 5s ease, transform 0.4s ease;
             z-index: 9999;
             display: none;
         }
@@ -486,32 +486,20 @@
 
             function showBanner() {
                 const banner = document.getElementById('devBanner');
-                const overlay = document.getElementById('devOverlay');
+                if (!banner) return;
 
-                if (!banner || !overlay) return;
-
-                // Reset styles
-                overlay.style.display = 'block';
                 banner.style.display = 'block';
+                banner.style.opacity = '1';
 
-                // Animate in
-                requestAnimationFrame(() => {
-                    overlay.style.opacity = '1';
-                    banner.style.opacity = '1';
-                    banner.style.transform = 'translate(-50%, -50%) scale(1)';
-                });
-
-                // Animate out after 1.5s
+                // Start fading out slowly over 5 seconds
                 setTimeout(() => {
-                    overlay.style.opacity = '0';
                     banner.style.opacity = '0';
-                    banner.style.transform = 'translate(-50%, -50%) scale(0.9)';
+                }, 300); // Slight delay for instant visibility, then fade
 
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                        banner.style.display = 'none';
-                    }, 400); // Match transition duration
-                }, 300);
+                // Hide it fully after fade completes
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 5300); // 300ms delay + 5s fade-out
             }
 
 
