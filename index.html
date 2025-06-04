@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abbas Family - मस्तीभरा हिंदी अक्षर और शब्द जनरेटर</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            background: linear-gradient(to bottom, #FFFAF0, #FDEBD0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #FF5722;
+            margin-top: 20px;
+            text-shadow: 1px 1px #FFDAB9;
+        }
+
+        #display {
+            font-size: 18vw;
+            color: #4A148C;
+            background-color: #FFF3E0;
+            border: 6px dashed #FF9800;
+            border-radius: 20px;
+            width: 80vw;
+            height: 55vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            font-size: 1.5em;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button.active {
+            background-color: #FF9800;
+        }
+
+        button:hover {
+            background-color: #388E3C;
+        }
+
+        #display.small {
+            font-size: 10vw;
+            line-height: 1.2;
+        }
+
+
+        @media (max-width: 768px) {
+            #display {
+                font-size: 30vw;
+                width: 90vw;
+                height: 30vh;
+            }
+
+            button {
+                font-size: 1.2em;
+                padding: 10px 20px;
+            }
+        }
+
+        #demoContent h2 {
+            margin-top: 0;
+            color: #FF5722;
+        }
+
+        #demoContent button {
+            margin-top: 20px;
+            font-size: 1em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        #startDemoBtn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1em;
+            padding: 8px 16px;
+            background-color: #FF9800;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        #startDemoBtn:hover {
+            background-color: #F57C00;
+        }
+
+        .demo-highlight {
+            box-shadow: 0 0 15px 5px #FFC107;
+            transform: scale(1.05);
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        #demoOverlayMask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+            z-index: 999;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .demo-highlight {
+            position: relative;
+            z-index: 1001 !important;
+            box-shadow: 0 0 15px 5px #FFC107;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+
+        #displayBox button {
+            z-index: 1100;
+            /* higher than demo box */
+            position: relative;
+            /* ensure z-index works */
+        }
+
+        #devBanner {
+            position: fixed;
+            top: 30%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            font-size: 2em;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+            z-index: 9999;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeOut 5s forwards;
+            border-radius: 8px;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body onclick="handleBoxClick()">
+    <h1>🎉 मस्तीभरा हिंदी सीखें 🎉</h1>
+    <button id="startDemoBtn" onclick="startDemo()">🎥 Demo</button>
+
+
+    <div id="display">अ</div>
+
+    <div class="button-container">
+        <button id="letterBtn" class="active" onclick="event.stopPropagation(); setMode('letter')">🔤 अगला
+            अक्षर</button>
+        <button id="wordBtn" onclick="event.stopPropagation(); setMode('word')">🧠 अगला शब्द</button>
+        <button id="comboBtn" onclick="event.stopPropagation(); setMode('combo')">🔠 अक्षरों का मेल</button>
+    </div>
+
+    <div id="devBanner" style="display: none;">
+        Made by Hasan Abbas with love 🤍
+    </div>
+
+
+
+    <script>
+        let demoActive = false;
+
+        const hindiLetters = ['अ', 'आ', 'इ', 'ई', 'उ', 'ए', 'ओ', 'क', 'ख', 'ग', 'घ', 'च', 'छ', 'ज', 'झ', 'ट', 'ठ', 'ड', 'ढ', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह'];
+
+        const simpleWords = [
+            'घर', 'कम', 'नल', 'पन', 'मन', 'बस', 'रस', 'मद', 'धन', 'पल', 'बन', 'खग', 'रथ', 'जम', 'खट', 'पथ',
+            'वन', 'तन', 'धन', 'लक', 'सप', 'डब', 'ठग', 'घस', 'जग', 'दम', 'मल', 'दस', 'रज', 'फन',
+            'बच', 'टक', 'गज', 'बल', 'खल', 'छल', 'ढल', 'थल', 'गण', 'धम', 'पक', 'नर', 'गर', 'भट', 'टम',
+            'सज', 'नथ', 'झग', 'ठस', 'झट', 'मठ', 'कन', 'फक', 'जग', 'मग', 'खग', 'पग', 'ठग', 'नग', 'नल', 'चल', 'कल', 'बल',
+            'पल', 'फल', 'जल', 'छल', 'तल', 'थल', 'हल', 'पर', 'कर', 'डर',
+            'मर', 'सर', 'पथ', 'रथ', 'बस', 'रस', 'दस', 'एक', 'ढक', 'अंक',
+            'खत', 'छत', 'घर', 'धन', 'तन', 'वन', 'फण', 'गम', 'हम', 'जड़',
+            'लड़', 'पढ़', 'सब', 'टब', 'गज', 'आग', 'ईख', 'चख', 'कई', 'कद',
+            'उठ', 'आठ'
+        ];
+
+        let mode = 'letter'; // default mode
+
+        function setMode(selectedMode) {
+            mode = selectedMode;
+            document.getElementById('letterBtn').classList.remove('active');
+            document.getElementById('wordBtn').classList.remove('active');
+
+            if (mode === 'letter') {
+                document.getElementById('letterBtn').classList.add('active');
+                showRandomLetter();
+            } else {
+                document.getElementById('wordBtn').classList.add('active');
+                showRandomWord();
+            }
+        }
+        function setMode(selectedMode) {
+            mode = selectedMode;
+
+            // Remove 'active' from all
+            document.getElementById('letterBtn').classList.remove('active');
+            document.getElementById('wordBtn').classList.remove('active');
+            document.getElementById('comboBtn').classList.remove('active');
+
+            // Add active to selected
+            if (mode === 'letter') {
+                document.getElementById('letterBtn').classList.add('active');
+                showRandomLetter();
+            } else if (mode === 'word') {
+                document.getElementById('wordBtn').classList.add('active');
+                showRandomWord();
+            } else {
+                document.getElementById('comboBtn').classList.add('active');
+                showLetterCombo();
+            }
+        }
+        function showLetterCombo() {
+            const display = document.getElementById('display');
+            if (simpleWords.length === 0) return;
+            const word = simpleWords[Math.floor(Math.random() * simpleWords.length)];
+
+            display.classList.add('small'); // 👈 Add small font for combo mode
+
+            if (word.length === 2) {
+                const result = `${word[0]} + ${word[1]} = ${word}`;
+                display.innerText = result;
+            } else if (word.length === 3) {
+                const letters = word.split('');
+                const result = `${letters.join(' + ')} = ${word}`;
+                display.innerText = result;
+            } else {
+                display.innerText = word;
+            }
+        }
+
+
+
+        function showRandomLetter() {
+            const display = document.getElementById('display');
+            display.classList.remove('small'); // Reset font size
+            const randomIndex = Math.floor(Math.random() * hindiLetters.length);
+            display.innerText = hindiLetters[randomIndex];
+        }
+
+        function showRandomWord() {
+            const display = document.getElementById('display');
+            display.classList.remove('small'); // Reset font size
+            const randomIndex = Math.floor(Math.random() * simpleWords.length);
+            display.innerText = simpleWords[randomIndex];
+        }
+
+
+        function handleBoxClick() {
+            if (mode === 'letter') {
+                showRandomLetter();
+            } else if (mode === 'word') {
+                showRandomWord();
+            } else if (mode === 'combo') {
+                showLetterCombo();
+            }
+        }
+
+        document.addEventListener('keydown', function (event) {
+            const keysToTrigger = ['Enter', ' ', 'ArrowRight', 'ArrowDown'];
+
+            if (keysToTrigger.includes(event.key)) {
+                event.preventDefault();
+                handleBoxClick();
+            }
+        });
+        window.onload = function () {
+            if (!localStorage.getItem('demoSeen')) {
+                startDemo();
+                localStorage.setItem('demoSeen', 'true');
+            }
+        };
+
+        function startDemo() {
+            if (demoActive) {
+                console.log('Demo is already running, ignoring click.');
+                return;
+            }
+            demoActive = true;
+
+            const steps = [
+                {
+                    elementId: 'letterBtn',
+                    message: 'यहाँ क्लिक करके आप नया अक्षर देख सकते हैं।',
+                    action: () => setMode('letter')
+                },
+                {
+                    elementId: 'wordBtn',
+                    message: 'अब इस बटन से नया शब्द देखिए।',
+                    action: () => setMode('word')
+                },
+                {
+                    elementId: 'comboBtn',
+                    message: 'अब अक्षरों का मेल देखिए।',
+                    action: () => setMode('combo')
+                },
+                {
+                    elementId: null,
+                    message: 'अब आप क्लिक करके या Enter दबाकर इस्तेमाल कर सकते हैं!',
+                    action: () => { }
+                }
+            ];
+
+            let currentStep = 0;
+            const overlay = document.getElementById('demoOverlayMask');
+            overlay.style.display = 'block';
+
+            const demoBox = document.createElement('div');
+            demoBox.id = 'demoStepBox';
+            demoBox.style.position = 'fixed';
+            demoBox.style.bottom = '150px';
+            demoBox.style.left = '50%';
+            demoBox.style.transform = 'translateX(-50%)';
+            demoBox.style.background = '#fff8e1';
+            demoBox.style.padding = '15px 25px';
+            demoBox.style.borderRadius = '12px';
+            demoBox.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            demoBox.style.fontSize = '1.1em';
+            demoBox.style.color = '#4A148C';
+            demoBox.style.zIndex = '1002';
+
+            const messageEl = document.createElement('div');
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = 'Next ➡️';
+            nextBtn.style.marginTop = '10px';
+            nextBtn.style.fontSize = '1em';
+            nextBtn.style.padding = '8px 20px';
+            nextBtn.style.border = 'none';
+            nextBtn.style.borderRadius = '8px';
+            nextBtn.style.backgroundColor = '#FF9800';
+            nextBtn.style.color = 'white';
+            nextBtn.style.cursor = 'pointer';
+
+            nextBtn.onclick = () => nextStep();
+
+            demoBox.appendChild(messageEl);
+            demoBox.appendChild(nextBtn);
+            document.body.appendChild(demoBox);
+
+            function nextStep() {
+                document.querySelectorAll('.demo-highlight').forEach(el => el.classList.remove('demo-highlight'));
+
+                const step = steps[currentStep];
+                messageEl.innerText = step.message;
+
+                if (step.elementId) {
+                    const element = document.getElementById(step.elementId);
+                    element.classList.add('demo-highlight');
+                    step.action();
+                }
+
+                currentStep++;
+
+                if (currentStep >= steps.length) {
+                    nextBtn.textContent = 'समाप्त';
+                    nextBtn.onclick = () => {
+                        overlay.style.display = 'none';
+                        document.body.removeChild(demoBox);
+                        document.querySelectorAll('.demo-highlight').forEach(el => el.classList.remove('demo-highlight'));
+                        demoActive = false; // ✅ Reset flag to allow re-clicking later
+                    };
+                }
+            }
+
+            nextStep(); // Start with the first step
+        }
+
+
+        document.getElementById('demoButton').addEventListener('click', () => {
+            if (demoActive) return;  // Demo already running, ignore clicks
+
+            demoActive = true;       // Mark demo as active
+
+            // Your demo box creation or showing code here
+            showDemoBox();
+
+            // Example: Automatically hide demo after some time or on user action
+            setTimeout(() => {
+                hideDemoBox();
+                demoActive = false;   // Reset flag after demo ends
+            }, 10000); // 10 seconds demo duration, adjust as needed
+        });
+
+        // Functions to show/hide demo box
+
+        function showDemoBox() {
+            // Check if demo box exists already
+            let demoBox = document.getElementById('demoBox');
+            if (!demoBox) {
+                demoBox = document.createElement('div');
+                demoBox.id = 'demoBox';
+                demoBox.style = `
+      position: fixed;
+      bottom: 90px;
+      right: 30px;
+      width: 200px;
+      height: 200px;
+      background-color: white;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+      padding: 20px;
+    `;
+                demoBox.textContent = 'Demo Content Here...';
+                document.body.appendChild(demoBox);
+            }
+            demoBox.style.display = 'block';
+        }
+
+        function hideDemoBox() {
+            const demoBox = document.getElementById('demoBox');
+            if (demoBox) {
+                demoBox.style.display = 'none';
+            }
+        }
+
+        (function () {
+            const banner = document.getElementById('devBanner');
+
+            function showBanner() {
+                if (!banner) return;
+                banner.style.display = 'block';
+                banner.style.opacity = '1';
+
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 5000); // Hide after 5s
+            }
+
+            // --- Mobile Shake Detection ---
+            let lastShakeTime = 0;
+            window.addEventListener('devicemotion', (event) => {
+                const acc = event.accelerationIncludingGravity;
+                const threshold = 15; // Adjust for sensitivity
+                const currentTime = new Date().getTime();
+
+                if (acc && (Math.abs(acc.x) > threshold || Math.abs(acc.y) > threshold || Math.abs(acc.z) > threshold)) {
+                    if (currentTime - lastShakeTime > 3000) { // Avoid repeat
+                        lastShakeTime = currentTime;
+                        showBanner();
+                    }
+                }
+            });
+
+            // --- Desktop: Fast Cursor Movement Detection ---
+            let lastMove = 0;
+            let movementCount = 0;
+            const resetTime = 500;
+
+            window.addEventListener('mousemove', (e) => {
+                const now = performance.now();
+                if (now - lastMove < 50) {
+                    movementCount++;
+                } else {
+                    movementCount = 0;
+                }
+
+                if (movementCount > 20) { // rapid shaking
+                    movementCount = 0;
+                    showBanner();
+                }
+
+                lastMove = now;
+            });
+        })();
+        if (movementCount > 20) {
+            movementCount = 0;
+            console.log('Fast movement detected 🚀'); // Add this
+            showBanner();
+        }
+        if (window.DeviceMotionEvent) {
+            let lastShake = 0;
+            window.addEventListener('devicemotion', function (event) {
+                const acc = event.accelerationIncludingGravity;
+                const totalAcc = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+
+                if (totalAcc > 30) {
+                    const now = Date.now();
+                    if (now - lastShake > 2000) {
+                        showBanner();
+                        lastShake = now;
+                    }
+                }
+            });
+        }
+
+
+    </script>
+
+    <div id="demoOverlayMask"></div>
+
+</body>
+
+</html>
