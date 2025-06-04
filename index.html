@@ -165,36 +165,35 @@
             /* ensure z-index works */
         }
 
-        #devBanner {
+        #devOverlay {
             position: fixed;
-            top: 30%;
+            top: 0;
             left: 0;
             width: 100%;
-            text-align: center;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-            font-size: 2em;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 20px;
-            z-index: 9999;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            animation: fadeOut 5s forwards;
-            border-radius: 8px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            display: none;
+            z-index: 9998;
         }
 
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-            }
-
-            80% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-                display: none;
-            }
+        #devBanner {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: linear-gradient(90deg, #7a5f95, #fc7025);
+            color: white;
+            font-size: 1.6em;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 16px 28px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 9999;
+            display: none;
         }
     </style>
 </head>
@@ -213,9 +212,12 @@
         <button id="comboBtn" onclick="event.stopPropagation(); setMode('combo')">🔠 अक्षरों का मेल</button>
     </div>
 
+    <div id="devOverlay"></div>
     <div id="devBanner" style="display: none;">
         Made by Hasan Abbas with love 🤍
+        <!-- love 🤍 ❤️ ❥ -->
     </div>
+
 
 
 
@@ -475,40 +477,67 @@
             }
         }
 
+    </script>
+
+    <div id="demoOverlayMask"></div>
+    <script>
         (function () {
             const banner = document.getElementById('devBanner');
 
             function showBanner() {
-                if (!banner) return;
-                banner.style.display = 'block';
-                banner.style.opacity = '1';
+                const banner = document.getElementById('devBanner');
+                const overlay = document.getElementById('devOverlay');
 
+                if (!banner || !overlay) return;
+
+                // Reset styles
+                overlay.style.display = 'block';
+                banner.style.display = 'block';
+
+                // Animate in
+                requestAnimationFrame(() => {
+                    overlay.style.opacity = '1';
+                    banner.style.opacity = '1';
+                    banner.style.transform = 'translate(-50%, -50%) scale(1)';
+                });
+
+                // Animate out after 1.5s
                 setTimeout(() => {
-                    banner.style.display = 'none';
-                }, 5000); // Hide after 5s
+                    overlay.style.opacity = '0';
+                    banner.style.opacity = '0';
+                    banner.style.transform = 'translate(-50%, -50%) scale(0.9)';
+
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        banner.style.display = 'none';
+                    }, 400); // Match transition duration
+                }, 300);
             }
+
+
 
             // --- Mobile Shake Detection ---
             let lastShakeTime = 0;
-            window.addEventListener('devicemotion', (event) => {
-                const acc = event.accelerationIncludingGravity;
-                const threshold = 15; // Adjust for sensitivity
-                const currentTime = new Date().getTime();
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', (event) => {
+                    const acc = event.accelerationIncludingGravity;
+                    const threshold = 15;
+                    const now = Date.now();
 
-                if (acc && (Math.abs(acc.x) > threshold || Math.abs(acc.y) > threshold || Math.abs(acc.z) > threshold)) {
-                    if (currentTime - lastShakeTime > 3000) { // Avoid repeat
-                        lastShakeTime = currentTime;
-                        showBanner();
+                    if (acc && (Math.abs(acc.x) > threshold || Math.abs(acc.y) > threshold || Math.abs(acc.z) > threshold)) {
+                        if (now - lastShakeTime > 3000) {
+                            lastShakeTime = now;
+                            showBanner();
+                        }
                     }
-                }
-            });
+                });
+            }
 
-            // --- Desktop: Fast Cursor Movement Detection ---
+            // --- Desktop: Mouse Shake Detection ---
             let lastMove = 0;
             let movementCount = 0;
-            const resetTime = 500;
 
-            window.addEventListener('mousemove', (e) => {
+            window.addEventListener('mousemove', () => {
                 const now = performance.now();
                 if (now - lastMove < 50) {
                     movementCount++;
@@ -516,7 +545,7 @@
                     movementCount = 0;
                 }
 
-                if (movementCount > 20) { // rapid shaking
+                if (movementCount > 20) {
                     movementCount = 0;
                     showBanner();
                 }
@@ -524,31 +553,7 @@
                 lastMove = now;
             });
         })();
-        if (movementCount > 20) {
-            movementCount = 0;
-            console.log('Fast movement detected 🚀'); // Add this
-            showBanner();
-        }
-        if (window.DeviceMotionEvent) {
-            let lastShake = 0;
-            window.addEventListener('devicemotion', function (event) {
-                const acc = event.accelerationIncludingGravity;
-                const totalAcc = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
-
-                if (totalAcc > 30) {
-                    const now = Date.now();
-                    if (now - lastShake > 2000) {
-                        showBanner();
-                        lastShake = now;
-                    }
-                }
-            });
-        }
-
-
     </script>
-
-    <div id="demoOverlayMask"></div>
 
 </body>
 
